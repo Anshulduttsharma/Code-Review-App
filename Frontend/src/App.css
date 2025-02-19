@@ -45,4 +45,6 @@ main .left .code .language-js{
  main .right{
   background-color: #343434;
   color: #fff;
+  padding: 1rem 2rem;
+  overflow: auto;
  }
