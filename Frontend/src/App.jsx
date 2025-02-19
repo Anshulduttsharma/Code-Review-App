@@ -12,18 +12,25 @@ function App() {
   const [code, setCode] = useState(`function sum(){
 return 1+1
 }`);
-
-const [review, setReview] = useState(``);
+  const [review, setReview] = useState(``);
+  const [loading, setLoading] = useState(false); // Add loading state
 
   useEffect(() => {
     prism.highlightAll();
   }, []);
 
   async function reviewCode() {
-    const response = await axios.post("http://localhost:3000/ai/get-review", {
-      code,
-    });
-    setReview(response.data);
+    setLoading(true); // Show loading indicator
+    try {
+      const response = await axios.post("http://localhost:3000/ai/get-review", {
+        code,
+      });
+      setReview(response.data);
+    } catch (error) {
+      console.error("Error during review:", error);
+    } finally {
+      setLoading(false); // Hide loading indicator when done
+    }
   }
 
   return (
@@ -51,8 +58,13 @@ const [review, setReview] = useState(``);
             Review
           </button>
         </div>
+
         <div className="right">
-          <Markdown rehypePlugins={[ rehypeHighlight ]}>{review}</Markdown>
+          {loading ? (
+            <div className="loading-indicator">Loading...</div> // Display loading message
+          ) : (
+            <Markdown rehypePlugins={[rehypeHighlight]}>{review}</Markdown>
+          )}
         </div>
       </main>
     </>
